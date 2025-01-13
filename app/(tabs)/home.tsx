@@ -1,94 +1,63 @@
-
-
-
-
 // app/(tabs)/home.tsx
-import React, { useState } from 'react';
-import { View, ScrollView, TextInput, Image, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Text } from '../../components/ui/Text';
 import { Card } from '../../components/ui/Card';
-import { ProductCard } from '../../components/ui/ProductCard';
+import { ProductCard } from '../../components/ProductCard';
+import CategoryCard from '../../components/CategoryCard';
+import QuickLink from '../../components/QuickLink';
+import Section from '../../components/Section';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { LocationExpandedView } from '../../components/LocationExpandedView';
 import { router } from 'expo-router';
+import * as Location from 'expo-location';
+import { IMAGES } from '../../constants/images';
+import { QUICK_LINKS } from '../../data/quickLinks';
+import { Product, Category } from '../../types';
 
 const { width } = Dimensions.get('window');
 
-// Types
-interface QuickLinkProps {
-  icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-  onPress?: () => void;
-}
-
-interface SectionProps {
-  title: string;
-  children: React.ReactNode;
-  showViewAll?: boolean;
-  onViewAll?: () => void;
-}
-
-interface CategoryCardProps {
-  title: string;
-  startingPrice: string;
-  image: { uri: string };
-  onPress?: () => void;
-}
-
-// Constants
-const IMAGES = {
-  masala: { uri: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500&q=80" },
-  sugar: { uri: "https://images.unsplash.com/photo-1622484211148-c6b9d8dba7bb?w=500&q=80" },
-  salt: { uri: "https://images.unsplash.com/photo-1626197031507-c17099753214?w=500&q=80" },
-  atta: { uri: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&q=80" },
-  rice: { uri: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&q=80" },
-  oil: { uri: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&q=80" },
-  fruits: { uri: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=500&q=80" },
-};
-
-const QUICK_LINKS = [
-  { icon: 'basket' as const, title: 'Top Deals' },
-  { icon: 'restaurant' as const, title: 'Cooking Essentials' },
-  { icon: 'fast-food' as const, title: 'Packaged Food' },
-  { icon: 'cafe' as const, title: 'Beverages' },
-];
-
-const BEST_SELLERS = [
+// Sample data for demonstration
+const SAMPLE_PRODUCTS: Product[] = [
   {
-    id: '1',
-    image: IMAGES.atta,
-    name: "Savaria Shudh Whole Wheat Atta",
-    weight: "10 kg",
-    basePrice: 371,
-    baseMrp: 458,
-    discount: "20% OFF"
+    id: 'sugar',
+    name: 'Premium Sugar',
+    description: 'High-quality refined sugar',
+    basePrice: 51,
+    baseMrp: 60,
+    weight: '1 kg',
+    discount: '15% OFF',
+    image: IMAGES.sugar,
+    category: 'groceries',
   },
   {
-    id: '2',
-    image: IMAGES.rice,
-    name: "Premium Basmati Rice",
-    weight: "5 kg",
-    basePrice: 299,
-    baseMrp: 399,
-    discount: "25% OFF"
-  }
+    id: 'salt',
+    name: 'Iodized Salt',
+    description: 'Pure iodized salt',
+    basePrice: 9,
+    baseMrp: 12,
+    weight: '1 kg',
+    discount: '25% OFF',
+    image: IMAGES.salt,
+    category: 'groceries',
+  },
 ];
 
-const CATEGORIES = [
+const SAMPLE_CATEGORIES: Category[] = [
   {
-    id: '1',
+    id: 'fruits-vegetables',
     title: "Fruits & Vegetables",
     startingPrice: "₹9/kg",
-    image: IMAGES.fruits
+    image: IMAGES.fruits,
   },
   {
-    id: '2',
+    id: 'masala-spices',
     title: "Masala & Spices",
     startingPrice: "₹45/pack",
-    image: IMAGES.masala
-  }
+    image: IMAGES.masala,
+  },
 ];
 
 const Home: React.FC = () => {
@@ -103,6 +72,30 @@ const Home: React.FC = () => {
   
   const [showLocationExpanded, setShowLocationExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [city, setCity] = useState<string | null>(null);
+  const [locationErrorMsg, setLocationErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setLocationErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      let [address] = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      if (address && address.city) {
+        setCity(address.city);
+      } else {
+        setLocationErrorMsg('Could not determine city');
+      }
+    })();
+  }, []);
 
   const LocationHeader = () => (
     <TouchableOpacity 
@@ -146,52 +139,6 @@ const Home: React.FC = () => {
     router.push(`/category/${categoryId}`);
   };
 
-  const QuickLink: React.FC<QuickLinkProps> = ({ icon, title, onPress }) => (
-    <TouchableOpacity 
-      className="items-center"
-      activeOpacity={0.7}
-      onPress={onPress}
-    >
-      <View className="w-12 h-12 bg-gray-100 rounded-full items-center justify-center">
-        <Ionicons name={icon} size={24} color="#4B5563" />
-      </View>
-      <Text className="text-xs mt-1 text-center">{title}</Text>
-    </TouchableOpacity>
-  );
-
-  const Section: React.FC<SectionProps> = ({ title, children, showViewAll, onViewAll }) => (
-    <View className="mt-6">
-      <View className="flex-row justify-between items-center px-4 mb-4">
-        <Text className="text-lg font-bold">{title}</Text>
-        {showViewAll && (
-          <TouchableOpacity 
-            activeOpacity={0.7}
-            onPress={onViewAll}
-          >
-            <Text className="text-green-500">View All</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {children}
-    </View>
-  );
-
-  const CategoryCard: React.FC<CategoryCardProps> = ({ title, startingPrice, image, onPress }) => (
-    <TouchableOpacity 
-      className="w-[48%] bg-yellow-50 rounded-lg p-4 mb-4"
-      activeOpacity={0.7}
-      onPress={onPress}
-    >
-      <Image 
-        source={image} 
-        className="w-20 h-20"
-        resizeMode="cover"
-      />
-      <Text className="font-bold mt-2">{title}</Text>
-      <Text className="text-gray-500 text-sm">Starting at {startingPrice}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header with Location */}
@@ -222,22 +169,18 @@ const Home: React.FC = () => {
         {/* Banner */}
         <View className="p-4">
           <Card className="bg-yellow-50 p-4 rounded-lg">
-            <Text className="text-lg font-bold">LOWEST PRICES IN JAIPUR</Text>
+            <Text className="text-lg font-bold">
+              LOWEST PRICES IN {city || 'your location'}
+            </Text>
             <View className="flex-row mt-4 justify-between">
-              <ProductCard
-                image={IMAGES.sugar}
-                name="Sugar"
-                basePrice={51}
-                onPress={() => handleProductPress('sugar')}
-                className="w-[48%]"
-              />
-              <ProductCard
-                image={IMAGES.salt}
-                name="Salt"
-                basePrice={9}
-                onPress={() => handleProductPress('salt')}
-                className="w-[48%]"
-              />
+              {SAMPLE_PRODUCTS.slice(0, 2).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onPress={() => handleProductPress(product.id)}
+                  className="w-[48%]"
+                />
+              ))}
             </View>
           </Card>
         </View>
@@ -247,9 +190,8 @@ const Home: React.FC = () => {
           {QUICK_LINKS.map((link, index) => (
             <QuickLink 
               key={index}
-              icon={link.icon}
-              title={link.title}
-              onPress={() => console.log(`Pressed ${link.title}`)}
+              {...link}
+              onPress={() => router.push(link.route as any)}
             />
           ))}
         </View>
@@ -258,23 +200,18 @@ const Home: React.FC = () => {
         <Section 
           title="City Best Sellers" 
           showViewAll
-          onViewAll={() => console.log('View all best sellers')}
+          onViewAll={() => router.push('/best-sellers')}
         >
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
             className="px-4"
           >
-            {BEST_SELLERS.map((item) => (
+            {SAMPLE_PRODUCTS.map((product) => (
               <ProductCard
-                key={item.id}
-                image={item.image}
-                name={item.name}
-                basePrice={item.basePrice}
-                baseMrp={item.baseMrp}
-                discount={item.discount}
-                weight={item.weight}
-                onPress={() => handleProductPress(item.id)}
+                key={product.id}
+                product={product}
+                onPress={() => handleProductPress(product.id)}
                 className="w-64 mr-4"
               />
             ))}
@@ -288,10 +225,10 @@ const Home: React.FC = () => {
           onViewAll={() => router.push('/categories')}
         >
           <View className="flex-row flex-wrap justify-between px-4">
-            {CATEGORIES.map((category) => (
+            {SAMPLE_CATEGORIES.map((category) => (
               <CategoryCard
                 key={category.id}
-                {...category}
+                category={category}
                 onPress={() => handleCategoryPress(category.id)}
               />
             ))}
@@ -305,16 +242,11 @@ const Home: React.FC = () => {
             showsHorizontalScrollIndicator={false}
             className="px-4 pb-4"
           >
-            {BEST_SELLERS.map((item) => (
+            {SAMPLE_PRODUCTS.map((product) => (
               <ProductCard
-                key={item.id}
-                image={item.image}
-                name={item.name}
-                basePrice={item.basePrice}
-                baseMrp={item.baseMrp}
-                discount={item.discount}
-                weight={item.weight}
-                onPress={() => handleProductPress(item.id)}
+                key={product.id}
+                product={product}
+                onPress={() => handleProductPress(product.id)}
                 className="w-64 mr-4"
               />
             ))}

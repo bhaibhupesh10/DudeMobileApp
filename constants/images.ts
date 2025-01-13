@@ -1,5 +1,5 @@
 // constants/images.ts
-export const UNSPLASH_IMAGES = {
+export const IMAGES = {
   masala: { uri: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500&q=80" },
   sugar: { uri: "https://images.unsplash.com/photo-1622484211148-c6b9d8dba7bb?w=500&q=80" },
   salt: { uri: "https://images.unsplash.com/photo-1626197031507-c17099753214?w=500&q=80" },

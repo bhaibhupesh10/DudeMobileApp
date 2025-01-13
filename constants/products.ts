@@ -1,5 +1,5 @@
 // constants/products.ts
-import { UNSPLASH_IMAGES } from './images';
+import { IMAGES } from './images';
 
 export interface ProductDetails {
   id: string;
@@ -27,7 +27,7 @@ export const PRODUCTS: { [key: string]: ProductDetails } = {
     baseMrp: 60,
     weight: '1 kg',
     discount: '15% OFF',
-    image: UNSPLASH_IMAGES.sugar,
+    image: IMAGES.sugar,
     category: 'groceries',
     brand: 'Premium Foods',
     inStock: true,
@@ -59,7 +59,7 @@ export const PRODUCTS: { [key: string]: ProductDetails } = {
     baseMrp: 12,
     weight: '1 kg',
     discount: '25% OFF',
-    image: UNSPLASH_IMAGES.salt,
+    image: IMAGES.salt,
     category: 'groceries',
     brand: 'Premium Foods',
     inStock: true,
@@ -91,7 +91,7 @@ export const PRODUCTS: { [key: string]: ProductDetails } = {
     baseMrp: 458,
     weight: '10 kg',
     discount: '20% OFF',
-    image: UNSPLASH_IMAGES.atta,
+    image: IMAGES.atta,
     category: 'groceries',
     brand: 'Premium Foods',
     inStock: true,
@@ -123,7 +123,7 @@ export const PRODUCTS: { [key: string]: ProductDetails } = {
     baseMrp: 399,
     weight: '5 kg',
     discount: '25% OFF',
-    image: UNSPLASH_IMAGES.rice,
+    image: IMAGES.rice,
     category: 'groceries',
     brand: 'Premium Foods',
     inStock: true,

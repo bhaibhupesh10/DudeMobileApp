@@ -1,37 +1,25 @@
 // data/quickLinks.ts
-import { Ionicons } from '@expo/vector-icons';
-import { FeatureRoutes } from '../app/routes';
-
-export interface QuickLink {
-  id: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-  route: keyof FeatureRoutes;
-}
+import { QuickLink } from '../types';
 
 export const QUICK_LINKS: QuickLink[] = [
   { 
-    id: 'deals',
     icon: 'basket',
     title: 'Top Deals',
-    route: 'DEALS'
+    route: '/deals'
   },
   { 
-    id: 'cooking',
     icon: 'restaurant',
     title: 'Cooking Essentials',
-    route: 'COOKING_ESSENTIALS'
+    route: '/cooking-essentials'
   },
   { 
-    id: 'packaged',
     icon: 'fast-food',
     title: 'Packaged Food',
-    route: 'PACKAGED_FOOD'
+    route: '/packaged-food'
   },
   { 
-    id: 'beverages',
     icon: 'cafe',
     title: 'Beverages',
-    route: 'BEVERAGES'
-  },
+    route: '/beverages'
+  }
 ];

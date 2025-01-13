@@ -4,7 +4,7 @@
 // import { useLocalSearchParams } from 'expo-router';
 // import { Text } from '../../components/ui/Text';
 // import { Button } from '../../components/ui/Button';
-// import {UNSPLASH_IMAGES } from '../../constants/images';
+// import {IMAGES } from '../../constants/images';
 
 // const ProductScreen = () => {
 //   const { id } = useLocalSearchParams();
@@ -12,7 +12,7 @@
 //   return (
 //     <ScrollView className="flex-1 bg-white">
 //       <Image 
-//         source={UNSPLASH_IMAGES.sugar}
+//         source={IMAGES.sugar}
 //         className="w-full h-80"
 //         resizeMode="cover"
 //       />
@@ -65,7 +65,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { Text } from '../../components/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { UNSPLASH_IMAGES } from '../../constants/images';
+import { IMAGES } from '../../constants/images';
 
 const { width } = Dimensions.get('window');
 
@@ -97,7 +97,7 @@ const PRODUCT_DATA: { [key: string]: ProductDetails } = {
     baseMrp: 60,
     weight: '1 kg',
     discount: '15% OFF',
-    image: UNSPLASH_IMAGES.sugar,
+    image: IMAGES.sugar,
     category: 'Groceries',
     brand: 'Premium Foods',
     inStock: true,
@@ -129,7 +129,7 @@ const PRODUCT_DATA: { [key: string]: ProductDetails } = {
     baseMrp: 12,
     weight: '1 kg',
     discount: '25% OFF',
-    image: UNSPLASH_IMAGES.salt,
+    image: IMAGES.salt,
     category: 'Groceries',
     brand: 'Premium Foods',
     inStock: true,

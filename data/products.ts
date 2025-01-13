@@ -1,18 +1,6 @@
 // data/products.ts
-export interface Product {
-    id: string;
-    name: string;
-    description: string;
-    basePrice: number;
-    baseMrp?: number;
-    discount?: string;
-    weight?: string;
-    image: { uri: string };
-    category: string;
-    isPopular?: boolean;
-    isBestSeller?: boolean;
-    isSeasonSpecial?: boolean;
-  }
+import { Product } from '../types';
+import { IMAGES } from '../constants/images';
   
   export const PRODUCTS: Product[] = [
     {
@@ -23,7 +11,7 @@ export interface Product {
       baseMrp: 60,
       weight: '1 kg',
       discount: '15% OFF',
-      image: { uri: "https://images.unsplash.com/photo-1622484211148-c6b9d8dba7bb?w=500&q=80" },
+      image: IMAGES.sugar,
       category: 'groceries',
       isBestSeller: true,
     },
@@ -67,3 +55,14 @@ export interface Product {
     },
     // Add more products...
   ];
+
+  // Helper functions
+
+export const getPopularProducts = () => PRODUCTS.filter(product => product.isPopular);
+export const getSeasonSpecials = () => PRODUCTS.filter(product => product.isSeasonSpecial);
+export const getProductsByCategory = (categoryId: string) => 
+  PRODUCTS.filter(product => product.category === categoryId);
+
+
+export const getBestSellers = (): Product[] => 
+  PRODUCTS.filter(product => product.id === 'sugar' || product.id === 'atta');
